@@ -1,0 +1,39 @@
+{
+	"name": "Just Sandbox It",
+	"version": "0.1",
+	"description": "Just Sandboxing",
+	"manifest_version": 2,
+	"browser_action": {
+		"default_icon": "icon.png"
+	},
+	"web_accessible_resources": [
+		"content_scripts/bind.js"
+	],
+	"permissions": [
+		"storage",
+		"declarativeContent",
+		"activeTab",
+		"clipboardRead",
+		"background",
+		"http://*/*",
+		"https://*/*"
+	],
+	"zbackground": {
+		"scripts": [
+			"init.js"
+		]
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"http://*/*",
+				"https://*/*",
+				"file://*/*"
+			],
+			"js": [
+				"content_scripts/bind.js"
+			]
+		}
+	],
+	"content_security_policy": "script-src 'self' https:* 'unsafe-inline'; object-src 'self'"
+}
