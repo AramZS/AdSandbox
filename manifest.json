@@ -1,6 +1,6 @@
 {
-	"name": "Just Sandbox It",
-	"version": "0.1",
+	"name": "AdSandbox",
+	"version": "0.2",
 	"description": "Just Sandboxing",
 	"manifest_version": 2,
 	"browser_action": {
