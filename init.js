@@ -22,6 +22,56 @@ function attachScriptLast(scriptName) {
 	return stringBlock;
 }
 
+console.log('Just Sandboxing');
+chrome.runtime.onMessage.addListener(
+	function (request, sender, sendResponse) {
+		if (request.changeIcon) {
+			chrome.browserAction.setIcon({ path: "x-icon-s.png", tabId: sender.tab.id });
+		}
+	}
+);
+
+
+chrome.browserAction.onClicked.addListener((tab) => {
+	// disable the active tab
+	// browser.browserAction.disable(tab.id);
+	// requires the "tabs" or "activeTab" permission
+	var url = new URL(tab.url)
+	var domain = url.hostname
+	console.log(tab.url, url, domain);
+	chrome.storage.sync.get('sandbox_whitelist', function (result) {
+		if (!result || !result.hasOwnProperty('sandbox_whitelist')) { result = { sandbox_whitelist: [] }; }
+		if (result.sandbox_whitelist.includes(domain)) {
+			var index = result.sandbox_whitelist.indexOf(domain);
+			if (index > -1) {
+				result.sandbox_whitelist.splice(index, 1);
+			}
+			chrome.browserAction.setIcon({ path: "icon.png", tabId: tab.id });
+			chrome.tabs.executeScript(null, { file: 'content_scripts/bind.js' },
+				function () {
+					chrome.tabs.executeScript(null, { code: "console.log('Re-bind Iframes')" });
+				}
+			);
+		} else {
+			result.sandbox_whitelist.push(domain);
+			chrome.browserAction.setIcon({ path: "x-icon-s.png", tabId: tab.id });
+			var frames = document.getElementsByTagName('iframe');
+			//for (let item of frames) {
+			//item.sandbox = "";
+			//var wrapper = document.createElement('div');
+			//var parent = item.parentNode;
+			//parent.replaceChild(wrapper, item);
+			//wrapper.appendChild(item);
+			// JSON.stringify(item);
+			// item = item;
+			//};
+		}
+		chrome.storage.sync.set({ sandbox_whitelist: result.sandbox_whitelist }, function () {
+			console.log('Value is set to ' + JSON.stringify(result.sandbox_whitelist));
+		});
+	});
+});
+
 // chrome.tabs.executeScript(null,
 //	{ code: attachScriptFirst('content_scripts/bind') },
 //	function () {
@@ -29,7 +79,7 @@ function attachScriptLast(scriptName) {
 //	}
 //)
 
-attachScriptFirst('content_scripts/bind')
+// attachScriptFirst('content_scripts/bind')
 
 //chrome.tabs.executeScript({ file: "/content_scripts/bind.js" })
 //,"default_popup": "popup.html"

@@ -1,6 +1,7 @@
 //document.IFRAME
-console.log('BINDING IFRAMES');
+
 function bindActiveFrames() {
+	console.log('BINDING IFRAMES');
 	const setOfSandboxProps = [
 		"allow-forms",
 		// "allow-modals",
@@ -49,21 +50,34 @@ function bindActiveFrames() {
 	observer.observe(document, config);
 	console.log('Observers set');
 }
-try {
-	document.body.addEventListener(
-		'load', function () { console.log('Body ready'); }
-	);
-	bindActiveFrames();
-	console.log('Body ready checked');
-} catch (e) {
-	console.log('Need to wait for body');
-	if (document.body || document.readyState === "complete" ||
-		(document.readyState !== "loading" && !document.documentElement.doScroll)) {
-		bindActiveFrames();
+
+chrome.storage.sync.get('sandbox_whitelist', function (result) {
+	if (!result || !result.hasOwnProperty('sandbox_whitelist')) { result = { sandbox_whitelist: [] }; }
+	var url = new URL(document.location.href)
+	var domain = url.hostname
+	if (result.sandbox_whitelist.includes(domain)) {
+		// chrome.browserAction.setIcon({ path: "x-icon-s.png" });
+		chrome.runtime.sendMessage({ changeIcon: true });
 	} else {
-		window.addEventListener(
-			'DOMContentLoaded',
-			bindActiveFrames
-		);
+		// chrome.browserAction.setIcon({ path: "icon.png" });
+		try {
+			document.body.addEventListener(
+				'load', function () { console.log('Body ready'); }
+			);
+			bindActiveFrames();
+			console.log('Body ready checked');
+		} catch (e) {
+			console.log('Need to wait for body');
+			if (document.body || document.readyState === "complete" ||
+				(document.readyState !== "loading" && !document.documentElement.doScroll)) {
+				bindActiveFrames();
+			} else {
+				window.addEventListener(
+					'DOMContentLoaded',
+					bindActiveFrames
+				);
+			}
+		}
 	}
-}
+});
+
