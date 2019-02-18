@@ -85,7 +85,8 @@ chrome.runtime.onInstalled.addListener(details => {
 				"webex.com",
 				"drive.google.com",
 				"docs.google.com",
-				"wordpress.com"
+				"wordpress.com",
+				"squarespace.com"
 			];
 			chrome.storage.sync.set({ sandbox_whitelist: sandboxWhitelist.concat(baseWhitelist) }, function () {
 				console.log('Value is set to ' + JSON.stringify(sandboxWhitelist.concat(baseWhitelist)));
@@ -93,7 +94,7 @@ chrome.runtime.onInstalled.addListener(details => {
 		}
 	});
 
-}
+});
 // chrome.tabs.executeScript(null,
 //	{ code: attachScriptFirst('content_scripts/bind') },
 //	function () {

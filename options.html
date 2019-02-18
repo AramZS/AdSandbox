@@ -9,13 +9,16 @@
 
 <body>
 	<div id="interface">
+		<h1>JustSandboxIt Options</h1>
 		<form>
-			<label for="active_state">Active:
-				<input type="checkbox" id="active_state" name="active_state" checked>
-			</label>
+			<h3>Enabled Sandbox Options</h3>
+			<ul id="sandbox-options"></ul> <br />
+			<textarea id="sandbox-whitelist" name="sandbox-whitelist" rows="15" cols="83"></textarea>
+			<br />
+			<button id="save_options">Save</button>
 		</form>
 	</div>
-	<script src="popup.js"></script>
+	<script src="options.js"></script>
 </body>
 
 </html>

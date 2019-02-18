@@ -48,7 +48,33 @@ function arraysEqual(a, b) {
 	return true;
 }
 
+
 function setOfSandboxProps() {
+	return new Promise(function (resolve, reject) {
+		chrome.storage.sync.get('sandbox_attributes', function (data) {
+			if (!data.hasOwnProperty('sandbox_attributes') || data.sandbox_attributes.length < 1) {
+				var defaults = [
+					"allow-forms",
+					// "allow-modals",
+					"allow-scripts",
+					"allow-same-origin",
+					// "allow-storage-access-by-user-activation",
+					"allow-top-navigation-by-user-activation"
+				];
+				chrome.storage.sync.set({ sandbox_attributes: defaults }, function () {
+					console.log('Setting default sandbox props');
+				});
+				resolve(defaults);
+			} else {
+				return resolve(data.sandbox_attributes);
+			}
+
+		});
+	});
+
+}
+
+function setOfSandboxPropsOld() {
 	return [
 		"allow-forms",
 		// "allow-modals",
@@ -59,13 +85,14 @@ function setOfSandboxProps() {
 	];
 }
 
-function processSandboxValuesToDOMTokens(frame) {
+async function processSandboxValuesToDOMTokens(frame) {
 
 	var iterator = frame.sandbox.entries();
 	for (var value of iterator) {
 		frame.sandbox.remove(value);
 	}
-	setOfSandboxProps().forEach(function (item) {
+	var sandboxProps = await setOfSandboxProps();
+	sandboxProps.forEach(function (item) {
 		frame.sandbox.add(item);
 	});
 	return frame;
@@ -89,7 +116,7 @@ function frequencyControl() {
 	}
 }
 
-function bindActiveFrames() {
+async function bindActiveFrames() {
 	console.log('jsi', 'BINDING IFRAMES');
 	var frames = document.getElementsByTagName('iframe');
 	for (let item of frames) {
@@ -100,7 +127,7 @@ function bindActiveFrames() {
 		// item = item;
 	};
 	var config = { attributes: true, childList: true, subtree: true };
-	var callback = function (mutationsList, observer) {
+	var callback = async function (mutationsList, observer) {
 		for (var mutation of mutationsList) {
 			if (!frequencyControl()) {
 				if (mutation.type == 'childList') {
@@ -123,7 +150,8 @@ function bindActiveFrames() {
 									}
 									attrs.push(sandboxVal);
 								}
-								equalityOfSettings = arraysEqual(attrs, setOfSandboxProps());
+								var sandboxProps = await setOfSandboxProps();
+								equalityOfSettings = arraysEqual(attrs, sandboxProps);
 							}
 						}
 						// if (!arraysEqual(attrs, setOfSandboxProps())) {
@@ -157,7 +185,8 @@ function bindActiveFrames() {
 								}
 								attrs.push(sandboxVal);
 							}
-							equalityOfSettings = arraysEqual(attrs, setOfSandboxProps());
+							var sandboxProps = await setOfSandboxProps();
+							equalityOfSettings = arraysEqual(attrs, sandboxProps);
 						}
 						if (false === equalityOfSettings) {
 							console.log('jsi', 'The ' + mutation.attributeName + ' attribute was modified against spec.', mutation, mutation.target.sandbox.entries(), JSON.stringify(mutation));
