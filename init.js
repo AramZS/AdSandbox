@@ -72,6 +72,29 @@ chrome.browserAction.onClicked.addListener((tab) => {
 	});
 });
 
+chrome.runtime.onInstalled.addListener(details => {
+	var sandboxWhitelist = [];
+	chrome.storage.sync.get('sandbox_whitelist', function (result) {
+		if (!result || !result.hasOwnProperty('sandbox_whitelist')) { result = { sandbox_whitelist: [] }; }
+		// Only on initial install 
+		sandboxWhitelist = result.sandbox_whitelist;
+		if ((!details.hasOwnProperty('previousVersion') || !details.previousVersion) && (sandboxWhitelist.length === 0)) {
+
+			var baseWhitelist = [
+				"github.com",
+				"webex.com",
+				"drive.google.com",
+				"docs.google.com",
+				"wordpress.com",
+				"squarespace.com"
+			];
+			chrome.storage.sync.set({ sandbox_whitelist: sandboxWhitelist.concat(baseWhitelist) }, function () {
+				console.log('Value is set to ' + JSON.stringify(sandboxWhitelist.concat(baseWhitelist)));
+			});
+		}
+	});
+
+});
 // chrome.tabs.executeScript(null,
 //	{ code: attachScriptFirst('content_scripts/bind') },
 //	function () {
