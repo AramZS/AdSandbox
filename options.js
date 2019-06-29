@@ -26,10 +26,73 @@ function setOfSandboxProps() {
 
 }
 
+function defaultWhiteListedUrls() {
+	return [
+		'foursquare.com',
+		'codepen.io',
+		'www.chronoto.pe',
+		'mail.google.com',
+		'secure.meetup.com',
+		'www.facebook.com',
+		'console.aws.amazon.com',
+		'account.squarespace.com',
+		'exchange.prx.org',
+		'*.myworkday.com',
+		'*.atlassian.net',
+		'app.plex.tv',
+		'cssdeck.com',
+		'giphy.com',
+		'hackernoon.com',
+		'medium.com',
+		'localhost:8000',
+		'calendar.google.com',
+		'hangouts.google.com',
+		'payment.amctheatres.com',
+		'github.com',
+		'www.amazon.com',
+		'twentysidedstore.com',
+		'*.substack.com',
+		'tools.wmflabs.org',
+		'commons.wikimedia.org',
+		'jsfiddle.net',
+		'localhost',
+		'drive.google.com',
+		'galley.cjr.org',
+		'soundcloud.com',
+		'groups.google.com',
+		'www.elemental.com',
+		'www.draw.io',
+		'www.dropbox.com',
+		'book.jetblue.com',
+		'pay.jetblue.com',
+		'www.hackerrank.com',
+		'appleid.apple.com',
+		'appstoreconnect.apple.com',
+		'web.archive.org',
+		'twitter.com',
+		'www.w3schools.com',
+		'glitch.com',
+		'cloud.mongodb.com',
+		'svelte.dev',
+		'127.0.0.1',
+		'www.are.na',
+		'colab.research.google.com',
+		'www.amtrak.com',
+		'app.jqbx.fm',
+		'docs.google.com',
+		'www.delta.com',
+		'www.concursolutions.com',
+		'chaseonline.chase.com',
+		'my.bluehost.com',
+		'idmsa.apple.com',
+		'iadworkbench.apple.com'
+	]
+}
+
 function whitelisted() {
 	return new Promise(function (resolve, reject) {
 		chrome.storage.sync.get('sandbox_whitelist', function (result) {
-			if (!result || !result.hasOwnProperty('sandbox_whitelist')) { result = { sandbox_whitelist: [] }; }
+			if (!result || !result.hasOwnProperty('sandbox_whitelist')) { result = { sandbox_whitelist: defaultWhiteListedUrls() }; }
 			resolve(result.sandbox_whitelist);
 		});
 	});
