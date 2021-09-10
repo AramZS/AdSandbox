@@ -83,10 +83,18 @@ chrome.runtime.onInstalled.addListener(details => {
 			var baseWhitelist = [
 				"github.com",
 				"webex.com",
+				"*.webex.com", 
+				"*.substack.com", 
 				"drive.google.com",
 				"docs.google.com",
 				"wordpress.com",
-				"squarespace.com"
+				"squarespace.com",
+				"*.amtrak.com",
+				"amp.dev",
+				"*.easywebinar.live",
+				"hacktext.com",
+				"*.okta.com",
+				"glitch.com"
 			];
 			chrome.storage.sync.set({ sandbox_whitelist: sandboxWhitelist.concat(baseWhitelist) }, function () {
 				console.log('Value is set to ' + JSON.stringify(sandboxWhitelist.concat(baseWhitelist)));
